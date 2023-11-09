@@ -1,0 +1,49 @@
+/*
+
+  Primer programa: Vamos a programar el RTC y mostrar la fecha y hora
+  por una pantalla LCD 16x02
+
+*/
+
+#include <Wire.h>   // incluye libreria para interfaz I2C
+#include <RTClib.h>   // incluye libreria para el manejo del modulo RTC
+#include <LiquidCrystal_I2C.h>
+
+//Crear el objeto lcd  dirección  0x3F y 16 columnas x 2 filas
+LiquidCrystal_I2C lcd(39, 16, 2); //
+
+
+RTC_DS3231 rtc;     // crea objeto del tipo RTC_DS3231
+void setup() {
+  // Inicializar el LCD
+  lcd.init();
+
+  //Encender la luz de fondo.
+  lcd.backlight();
+
+
+
+
+  if (! rtc.begin()) {       // si falla la inicializacion del modulo
+    lcd.print("Modulo RTC no encontrado !");  // muestra mensaje de error
+    while (1);         // bucle infinito que detiene ejecucion del programa
+  }
+  rtc.adjust(DateTime(__DATE__, __TIME__));  // funcion que permite establecer fecha y horario
+  // al momento de la compilacion. Comentar esta linea
+}           // y volver a subir para normal operacion
+
+void loop () {
+  DateTime fecha = rtc.now();      // funcion que devuelve fecha y horario en formato
+  // DateTime y asigna a variable fecha
+//reloj
+lcd.setCursor(0, 0);
+lcd.print("Relojito");
+  lcd.setCursor(0, 1);
+lcd.print(fecha.hour()); 
+lcd.print(":");
+lcd.print(fecha.minute());
+lcd.print(":");
+  lcd.print(fecha.second());    // funcion que obtiene los segundos de la fecha completa
+
+  delay(1000);         // demora de 1 segundo
+}
